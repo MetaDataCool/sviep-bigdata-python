@@ -24,9 +24,15 @@ Python Setup
 
 you need to have python, an environment where you can run it, the packages pymongo and sklearn.
 
+Python program
+
 main.py can be run and right now does
 
  - imports pymongo package to connect to the mongodb from python
  - print the first bag of words 
 
  - (then uses http://scikit-learn.org/stable/modules/feature_extraction.html to create the (i,j) val() matrix)
+
+ Take the csv and import it in python
+ http://stackoverflow.com/questions/4315506/load-csv-into-2d-matrix-with-numpy-for-plotting
+ 
