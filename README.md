@@ -24,10 +24,19 @@ Python Setup
 
 you need to have python, an environment where you can run it, the packages pymongo and sklearn.
 
+I am using personally Sublime Text 3, with the SublimeREPL plugin, installed with Package control.
+
 Python program
 
 main.py can be run and right now does
 
+ Take the csv file and import it in python
+ http://stackoverflow.com/questions/4315506/load-csv-into-2d-matrix-with-numpy-for-plotting
+
+
+
+
+has legacy script to do
  - imports pymongo package to connect to the mongodb from python
  - print the first bag of words 
 
@@ -35,4 +44,4 @@ main.py can be run and right now does
 
  Take the csv and import it in python
  http://stackoverflow.com/questions/4315506/load-csv-into-2d-matrix-with-numpy-for-plotting
- 
+

@@ -3,32 +3,54 @@
 
 import pymongo
 
-CONNECTION = pymongo.Connection()
+# Imports useful packages 
+import numpy as np
 
-DB = CONNECTION["sviepbd"]
+# Returns a matrix from the csv file
+def import_csv_matrix(path, delimiter):
+    # the weird comment below is just to disable my text/error highlighter plugin for one line "./matrices_creuses/few-results_matrix.csv"
+    # pylint: disable=E1103
+    sparse_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter)
+    # pylint: enable=E1103 
+    return sparse_matrix  
 
-# RESULTS = DB.results
-RESULTS_COMPLETE = DB.results_complete
+def main():
+    print "Launch approval"
+    import_csv_matrix("./matrices_creuses/few-results_matrix.csv", " ") 
 
-print RESULTS_COMPLETE.find_one()['tokens_bag']
+main()
 
-# Vectorizing tries...not working right now, i have to find the right library from sklearn
-
-RESULTS_BAGS = RESULTS_COMPLETE.find(limit=1, fields=["tokens_bag"])
-
-RESULTS_BAGS_LIST = []
-
-for bag in RESULTS_BAGS:
-    RESULTS_BAGS_LIST.append(bag["tokens_bag"])
-
-print RESULTS_BAGS_LIST
-
-from sklearn.feature_extraction import DictVectorizer
-
-VEC = DictVectorizer()
-
-VEC.fit_transform(RESULTS_BAGS).toarray()
+# ================= Old Code
+# Connects to Mongo DB and returns the pointer for the collection
+def retrieve_bags_from_collection(limit):
+    # Connects to Mongo DB
+    connection = pymongo.Connection()
+    database = connection["sviepbd"]
+    # RESULTS = DB.results
+    results_complete = database.results_complete
+    # Returns a collection projected
+    return results_complete.find(limit=limit, fields=["tokens_bag"])
 
 
+def vectorize_bags(token_bags_cursor):
+    # Vectorizing tries...not working right now, but it is ok since Valentin provided this code already in the other repository
+
+    results_bags = tokenBags.find(limit=1, fields=["tokens_bag"])
+
+    results_bags_list = []
+
+    for bag in token_bags_cursor:
+        results_bags_list.append(bag["tokens_bag"])
+
+    print results_bags_list
+
+    from sklearn.feature_extraction import DictVectorizer
+
+    vec = DictVectorizer()
+
+    vec.fit_transform(results_bags).toarray()
 
 
+# pylint: disable=E1103
+SPARSE_MATRIX = np.loadtxt(open("./matrices_creuses/few-results_matrix.csv", "rb"), delimiter=" ")
+# pylint: enable=E1103
