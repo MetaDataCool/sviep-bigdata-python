@@ -35,7 +35,7 @@ def retrieve_bags_from_collection(limit):
 def vectorize_bags(token_bags_cursor):
     # Vectorizing tries...not working right now, but it is ok since Valentin provided this code already in the other repository
 
-    results_bags = tokenBags.find(limit=1, fields=["tokens_bag"])
+    results_bags = token_bags_cursor.find(limit=1, fields=["tokens_bag"])
 
     results_bags_list = []
 
