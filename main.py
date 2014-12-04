@@ -16,7 +16,8 @@ def import_csv_matrix(path, delimiter):
 
 def main():
     print "Launch approval"
-    import_csv_matrix("./matrices_creuses/few-results_matrix.csv", " ") 
+    # Providen you have the "data" repo next to this folder
+    print import_csv_matrix("../data/few-results_matrix.csv", " ") 
 
 main()
 
