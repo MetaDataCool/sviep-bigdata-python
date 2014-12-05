@@ -3,21 +3,44 @@
 
 import pymongo
 
-# Imports useful packages 
+# Imports useful packages
 import numpy as np
+import scipy.sparse as sparse
+
+from sklearn.decomposition import SparsePCA
 
 # Returns a matrix from the csv file
 def import_csv_matrix(path, delimiter):
     # the weird comment below is just to disable my text/error highlighter plugin for one line "./matrices_creuses/few-results_matrix.csv"
     # pylint: disable=E1103
-    sparse_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter)
+    # sparse_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter, dtype={'names':('i', 'j', 'val'), 'formats': ('int', 'int', 'float')})    
+    csv_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter)
     # pylint: enable=E1103 
-    return sparse_matrix  
+    return csv_matrix
+
+# transforms a csv bag of words import to a sparse matrix
+def csv_to_sparse(csv_matrix):
+    sparse_matrix = sparse.coo_matrix(csv_matrix[:, 2], (csv_matrix[:, 0], csv_matrix[:, 1]))
+    return sparse_matrix
+
+# do the SparsePCA
+def do_sparse_pca(sparse_matrix):
+    # from skikit learn http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.SparsePCA.html#sklearn.decomposition.SparsePCA
+
+    dense_matrix = sparse_matrix.tobsr().toarray()
+    # instantiate the spca with some parameters
+    spca = SparsePCA(n_components=1, alpha=1, ridge_alpha=0.01, max_iter=1000, tol=1e-08, method='lars', n_jobs=1, U_init=None, V_init=None, verbose=False, random_state=None)
+
+    # train the spca with our matrix
+    spca.fit(dense_matrix)
+
+    # return the components
+    return spca.components_
 
 def main():
     print "Launch approval"
     # Providen you have the "data" repo next to this folder
-    print import_csv_matrix("../data/few-results_matrix.csv", " ") 
+    print do_sparse_pca(csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ")))
 
 main()
 
