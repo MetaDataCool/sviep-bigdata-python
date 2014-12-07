@@ -20,15 +20,24 @@ def import_csv_matrix(path, delimiter, is_word):
         dtype = np.dtype({'names': ['indice', 'word'], 'formats': ['i32', 'a30']})
         csv_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter, dtype=dtype)
     else:
-        csv_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter) 
+        dtype = np.dtype({'names': ['indicedoc', 'indiceword', 'val'], 'formats': ['i32', 'i32', 'f8']})
+        # dtype = np.dtype({'names': ['indicedoc', 'indiceword', 'val'], 'formats': ['i32', 'i32', 'f8']})
+        csv_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter, dtype=dtype) 
     # pylint: enable=E1103 
     return csv_matrix
 
 # transforms a csv bag of words import to a sparse matrix
-def csv_to_sparse(csv_matrix):
-    size = csv_matrix.size
-    sparse_matrix = sparse.coo_matrix(np.array(csv_matrix[:, 2]), (np.array(csv_matrix[:, 0]), np.array(csv_matrix[:, 1])),shape=(size[0],size[1]))
+def csv_to_sparse(csv_matrix, n_lines, n_columns):
+    # 421 docs , 32614 words for few
+    # 9000 docs, 2949 mots for many
+    sparse_matrix = sparse.coo_matrix((np.array(csv_matrix['val']), (np.array(csv_matrix['indiceword']), np.array(csv_matrix['indicedoc']))), shape=(n_lines, n_columns))
     return sparse_matrix
+
+def words_from_component(component_matrix, word_matrix):
+    non_zero_is = np.nonzero(component_matrix)[0].tolist()
+    print non_zero_is
+    for i in non_zero_is:
+        print component_matrix[i], word_matrix[i]
 
 # do the SparsePCA
 def do_sparse_pca(sparse_matrix):
@@ -47,19 +56,26 @@ def do_sparse_pca(sparse_matrix):
 def main_scikit():
     print "Beginning the sparse pca with scikit"
     # Providen you have the "data" repo next to this folder
-    return do_sparse_pca(csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ", False)))
+    return do_sparse_pca(csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ", False), ))
 
-def words_from_component(component_matrix, word_matrix):
-    non_zero_is = np.nonzero(component_matrix)[0].tolist()
-    print non_zero_is
-    for i in non_zero_is:
-        print component_matrix[i], word_matrix[i][1]
-
-
-def main_our_spca():
+def main_our_spca_few():
     print "Beginning the sparse pca with our powit implementation"
-    sparse_matrix = csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ", False))
-    return our_spca.powit(sparse_matrix, 50, 500)
+    # 421 docs (j) , 32615 words (i) for few
+    # 9000 docs, 2949 mots for many
+    sparse_matrix = csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ", False), 32615, 421)
+    component = our_spca.powit(sparse_matrix, 50, 500)[0]
+    word_matrix = import_csv_matrix("../data/few-results_words.csv", " ", True)
+    words_from_component(component, word_matrix)
+
+def main_our_spca_many():
+    print "Beginning the sparse pca with our powit implementation for many results"
+    # 421 docs (j) , 32615 words (i) for few
+    # 9000 docs, 2950 mots for many
+    sparse_matrix = csv_to_sparse(import_csv_matrix("../data/many-results_matrix.csv", " ", False), 2950, 9000)
+    component = our_spca.powit(sparse_matrix, 50, 2000)[0]
+    word_matrix = import_csv_matrix("../data/many-results_words.csv", " ", True)
+    words_from_component(component, word_matrix)
+
 
 
 # ================= Old Code
