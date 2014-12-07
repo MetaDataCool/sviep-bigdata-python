@@ -7,14 +7,20 @@ import pymongo
 import numpy as np
 import scipy.sparse as sparse
 
+import sparse_pca as our_spca
+
 from sklearn.decomposition import SparsePCA
 
 # Returns a matrix from the csv file
-def import_csv_matrix(path, delimiter):
+def import_csv_matrix(path, delimiter, is_word):
     # the weird comment below is just to disable my text/error highlighter plugin for one line "./matrices_creuses/few-results_matrix.csv"
     # pylint: disable=E1103
-    # sparse_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter, dtype={'names':('i', 'j', 'val'), 'formats': ('int', 'int', 'float')})    
-    csv_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter)
+    # sparse_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter, dtype={'names':('i', 'j', 'val'), 'formats': ('int', 'int', 'float')})   
+    if is_word: 
+        dtype = np.dtype({'names': ['indice', 'word'], 'formats': ['i32', 'a30']})
+        csv_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter, dtype=dtype)
+    else:
+        csv_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter) 
     # pylint: enable=E1103 
     return csv_matrix
 
@@ -37,12 +43,23 @@ def do_sparse_pca(sparse_matrix):
     # return the components
     return spca.components_
 
-def main():
-    print "Launch approval"
+def main_scikit():
+    print "Beginning the sparse pca with scikit"
     # Providen you have the "data" repo next to this folder
-    print do_sparse_pca(csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ")))
+    return do_sparse_pca(csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ", False)))
 
-main()
+def words_from_component(component_matrix, word_matrix):
+    non_zero_is = np.nonzero(component_matrix)[0].tolist()
+    print non_zero_is
+    for i in non_zero_is:
+        print component_matrix[i], word_matrix[i][1]
+
+
+def main_our_spca():
+    print "Beginning the sparse pca with our powit implementation"
+    sparse_matrix = csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ", False))
+    return our_spca.powit(sparse_matrix, 50, 50)
+
 
 # ================= Old Code
 # Connects to Mongo DB and returns the pointer for the collection
