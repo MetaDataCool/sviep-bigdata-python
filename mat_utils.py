@@ -26,3 +26,6 @@ def threshold(k,arr):
 		res[i] = arr[i]
 	return res
 
+
+
+
