@@ -7,7 +7,7 @@ import pymongo
 import numpy as np
 import scipy.sparse as sparse
 
-import sparse_pca as our_spca
+import SparsePCA as our_spca
 
 from sklearn.decomposition import SparsePCA
 
@@ -26,7 +26,8 @@ def import_csv_matrix(path, delimiter, is_word):
 
 # transforms a csv bag of words import to a sparse matrix
 def csv_to_sparse(csv_matrix):
-    sparse_matrix = sparse.coo_matrix(csv_matrix[:, 2], (csv_matrix[:, 0], csv_matrix[:, 1]))
+    size = csv_matrix.size
+    sparse_matrix = sparse.coo_matrix(np.array(csv_matrix[:, 2]), (np.array(csv_matrix[:, 0]), np.array(csv_matrix[:, 1])),shape=(size[0],size[1]))
     return sparse_matrix
 
 # do the SparsePCA
@@ -58,7 +59,7 @@ def words_from_component(component_matrix, word_matrix):
 def main_our_spca():
     print "Beginning the sparse pca with our powit implementation"
     sparse_matrix = csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ", False))
-    return our_spca.powit(sparse_matrix, 50, 50)
+    return our_spca.powit(sparse_matrix, 50, 500)
 
 
 # ================= Old Code
