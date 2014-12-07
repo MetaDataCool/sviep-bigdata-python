@@ -43,6 +43,14 @@ def powit(A,k,h):
 
 def blabla(A,k,h):
 	p=powit(A,k,h)
+	B=np.diag(p)
+	for i in range B.get_shape()[1]:
+		if B[i][i]=0:
+			B[i][i]=1
+		else :
+			B[i][i]=0
+	return B * A
+	
 
 
 
