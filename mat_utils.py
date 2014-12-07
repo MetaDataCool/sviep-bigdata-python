@@ -40,12 +40,25 @@ def csr_diag(arr):
 	res.setdiag(arr)
 	return res
 
+def csc_diag(arr):
+	"Creates a diagonal CSC matrix from given numpy array"
+	res = sparse.csc_matrix((arr.size,arr.size))
+	res.setdiag(arr)
+	return res
+
 def normalize_by_row(m):
 	"Normalizes a matrix so that its rows all have sum 1.0"
 	rows_sum = np.asarray(m.sum(1).transpose())[0]
 	inv_rs = np.array([zero_or_inverse(v) for v in  rows_sum])
 	#m = M.tocsc() # TODO : multiply by m as CSC ?
 	return csr_diag(inv_rs) * m
+
+def normalize_by_col(m):
+	"Normalizes a matrix so that its columns all have sum 1.0"
+	cols_sum = np.asarray(m.sum(0))[0]
+	inv_rs = np.array([zero_or_inverse(v) for v in  cols_sum])
+	#m = M.tocsc() # TODO : multiply by m as CSC ?
+	return m * csc_diag(inv_rs)
 
 
 
