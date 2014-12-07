@@ -1,0 +1,8 @@
+# ignore tmp files
+*~
+#*#
+*.DS_Store
+
+# ignore python bytecode
+*.pyc
+

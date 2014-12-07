@@ -26,7 +26,6 @@ def threshold(k,arr):
 		res[i] = arr[i]
 	return res
 
-
 def zero_or_inverse(x):
 	"Returns the inverse of a number, or 0 if it's 0"
 	if x == 0.0:
@@ -59,6 +58,7 @@ def normalize_by_col(m):
 	inv_rs = np.array([zero_or_inverse(v) for v in  cols_sum])
 	#m = M.tocsc() # TODO : multiply by m as CSC ?
 	return m * csc_diag(inv_rs)
+
 
 
 
