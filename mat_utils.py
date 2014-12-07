@@ -26,9 +26,10 @@ def threshold(k,arr):
 		res[i] = arr[i]
 	return res
 
-def norm_row(A)
-	"normalize the columns of a sparse matrix A"
+
+
 	
+
 
 
 
