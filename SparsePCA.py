@@ -19,15 +19,13 @@ def powit(A,k,h):
 	maxiter=100
 	ztol=1.0e-5
 	for i in range(maxiter):
-		#pi1 = pi
-		#qi1 = qi[:]
 		pi1=A.dot(qi)
 		pi1=mu.project_unit_circle(mu.threshold(k,pi1))
 		
 		qi1=tA.dot(pi1)
 		qi1=mu.threshold(h,qi1)
 
-		print qi1, pi1
+		#print qi1, pi1
 		
 		c=np.linalg.norm(pi-pi1)/np.linalg.norm(pi1)
 		if c<ztol:
@@ -35,7 +33,17 @@ def powit(A,k,h):
 		else:
 			pi = pi1
 			qi = qi1
-	print pi, c
+	print pi, qi, c, i
+	return pi
+
+
+
+def blabla(A,k,h):
+	p=powit(A,k,h)
+	B=
+
+
+
 
 
 
