@@ -32,7 +32,7 @@ def powit(A,k,h):
 		if c<ztol:
 			print "success"
 			print pi, qi, c, i
-			return pi,qi
+			return pi
 		else:
 			pi = pi1
 			qi = qi1
@@ -41,15 +41,28 @@ def powit(A,k,h):
 
 
 
-def blabla(A,k,h):
-	p=powit(A,k,h)
-	B=np.diag(p)
-	for i in range B.get_shape()[1]:
-		if B[i][i]=0:
-			B[i][i]=1
-		else :
-			B[i][i]=0
-	return B * A
+def zero_rows(p,M):
+	def f(x):
+		if(x == 0.0):
+			return 1.0
+		else:
+			return 0.0
+
+	d = np.array([f(x) for x in p])
+	return mu.csr_diag(d) * M
+
+
+def components(A,k,h,m):
+	res = []
+	for i in range(m):
+		pi = powit(A,k,h)
+		res.append(pi)
+		A=mu.normalize_by_row(zero_rows(pi,A))
+	return res
+
+		
+
+
 	
 
 
