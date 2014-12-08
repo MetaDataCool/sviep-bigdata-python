@@ -59,11 +59,11 @@ def main_scikit():
     return do_sparse_pca(csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ", False), ))
 
 def main_our_spca_few():
-    print "Beginning the sparse pca with our powit implementation"
+    print "Beginning the sparse pca with our powit implementation for few results"
     # 421 docs (j) , 32615 words (i) for few
     # 9000 docs, 2949 mots for many
     sparse_matrix = csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ", False), 32615, 421)
-    component = our_spca.powit(sparse_matrix, 50, 500)[0]
+    component = our_spca.powit(sparse_matrix, 50, 500)
     word_matrix = import_csv_matrix("../data/few-results_words.csv", " ", True)
     words_from_component(component, word_matrix)
 
@@ -72,9 +72,10 @@ def main_our_spca_many():
     # 421 docs (j) , 32615 words (i) for few
     # 9000 docs, 2950 mots for many
     sparse_matrix = csv_to_sparse(import_csv_matrix("../data/many-results_matrix.csv", " ", False), 2950, 9000)
-    component = our_spca.powit(sparse_matrix, 50, 2000)[0]
+    components = our_spca.components(sparse_matrix, 50, 2000, 3)
     word_matrix = import_csv_matrix("../data/many-results_words.csv", " ", True)
-    words_from_component(component, word_matrix)
+    for i in range(3):
+        words_from_component(components[i], word_matrix)
 
 
 
@@ -91,7 +92,7 @@ def retrieve_bags_from_collection(limit):
 
 
 def vectorize_bags(token_bags_cursor):
-    # Vectorizing tries...not working right now, but it is ok since Valentin provided this code already in the other repository
+    """Vectorizing tries...not working right now, but it is ok since Valentin provided this code already in the other repository"""
 
     results_bags = token_bags_cursor.find(limit=1, fields=["tokens_bag"])
 
