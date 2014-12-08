@@ -8,8 +8,10 @@ import numpy as np
 import scipy.sparse as sparse
 
 import SparsePCA as our_spca
+import operator as op
 
 from sklearn.decomposition import SparsePCA
+from pprint import pprint
 
 def import_csv_matrix(path, delimiter, is_word):
     "returns a matrix from a csv file like ours"
@@ -38,7 +40,7 @@ def words_from_component(component_matrix, word_matrix):
     print non_zero_is
     for i in non_zero_is:
         res.append([word_matrix[i][1], component_matrix[i]])
-    return res
+    return sorted(res,key=op.itemgetter(1),reverse=True)
 
 def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_components, norm_row):
     "Run our algorithm with all the parameters"
@@ -55,8 +57,9 @@ def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_componen
     return res
 
     # Examples
-    # run_spca("../data/many-results_matrix.csv", 2950, 9000, "../data/many-results_words.csv", " ", 50, 2000, 6, True)
-    # run_spca("../data/few-results_matrix.csv", 2950, 9000, "../data/few-results_words.csv", " ", 32615, 421, 6, True)
+    # res = run_spca("../data/many-results_matrix.csv", 2950, 9000, "../data/many-results_words.csv", " ", 50, 2000, 6, True)
+    # res = run_spca("../data/few-results_matrix.csv", 2950, 9000, "../data/few-results_words.csv", " ", 32615, 421, 6, True)
+    # pprint(res) ## pretty-printing, more readable
 
 # ================= Old Code
 # Connects to Mongo DB and returns the pointer for the collection

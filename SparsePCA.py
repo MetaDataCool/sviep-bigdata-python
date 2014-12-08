@@ -30,13 +30,13 @@ def powit(A,k,h):
 		
 		c=np.linalg.norm(pi-pi1)/np.linalg.norm(pi1)
 		if c<ztol:
-			print "success"
-			print pi, qi, c, i
+			print ("success after " + `i` + " iterations")
+			# print pi, qi, c, i
 			return pi
 		else:
 			pi = pi1
 			qi = qi1
-	print pi, qi, c, i
+	# print pi, qi, c, i
 	return pi
 
 
@@ -55,6 +55,7 @@ def zero_rows(p,M):
 def components(A,k,h,m, norm_row):
 	res = []
 	for i in range(m):
+		print ("getting component " + `i` + "...")
 		pi = powit(A,k,h)
 		res.append(pi)
 		if norm_row:
