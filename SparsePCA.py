@@ -52,12 +52,15 @@ def zero_rows(p,M):
 	return mu.csr_diag(d) * M
 
 
-def components(A,k,h,m):
+def components(A,k,h,m, norm_row):
 	res = []
 	for i in range(m):
 		pi = powit(A,k,h)
 		res.append(pi)
-		A=mu.normalize_by_row(zero_rows(pi,A))
+		if norm_row:
+			A=mu.normalize_by_row(zero_rows(pi,A))
+		else:
+			A=mu.normalize_by_col(zero_rows(pi,A))
 	return res
 
 		

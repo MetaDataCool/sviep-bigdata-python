@@ -11,10 +11,8 @@ import SparsePCA as our_spca
 
 from sklearn.decomposition import SparsePCA
 
-# Returns a matrix from the csv file
 def import_csv_matrix(path, delimiter, is_word):
-    # the weird comment below is just to disable my text/error highlighter plugin for one line "./matrices_creuses/few-results_matrix.csv"
-    # pylint: disable=E1103
+    "returns a matrix from a csv file like ours"
     # sparse_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter, dtype={'names':('i', 'j', 'val'), 'formats': ('int', 'int', 'float')})   
     if is_word: 
         dtype = np.dtype({'names': ['indice', 'word'], 'formats': ['i32', 'a30']})
@@ -23,61 +21,42 @@ def import_csv_matrix(path, delimiter, is_word):
         dtype = np.dtype({'names': ['indicedoc', 'indiceword', 'val'], 'formats': ['i32', 'i32', 'f8']})
         # dtype = np.dtype({'names': ['indicedoc', 'indiceword', 'val'], 'formats': ['i32', 'i32', 'f8']})
         csv_matrix = np.loadtxt(open(path, "rb"), delimiter=delimiter, dtype=dtype) 
-    # pylint: enable=E1103 
+
     return csv_matrix
 
-# transforms a csv bag of words import to a sparse matrix
 def csv_to_sparse(csv_matrix, n_lines, n_columns):
+    "transforms a csv bag of words import into a sparse matrix"
     # 421 docs , 32614 words for few
     # 9000 docs, 2949 mots for many
     sparse_matrix = sparse.coo_matrix((np.array(csv_matrix['val']), (np.array(csv_matrix['indiceword']), np.array(csv_matrix['indicedoc']))), shape=(n_lines, n_columns))
     return sparse_matrix
 
 def words_from_component(component_matrix, word_matrix):
+    "return the components vectors as weigthed words"
+    res = []
     non_zero_is = np.nonzero(component_matrix)[0].tolist()
     print non_zero_is
     for i in non_zero_is:
-        print component_matrix[i], word_matrix[i]
+        res.append([word_matrix[i][1], component_matrix[i]])
+    return res
 
-# do the SparsePCA
-def do_sparse_pca(sparse_matrix):
-    # from skikit learn http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.SparsePCA.html#sklearn.decomposition.SparsePCA
+def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_components, norm_row):
+    "Run our algorithm with all the parameters"
 
-    dense_matrix = sparse_matrix.tobsr().toarray()
-    # instantiate the spca with some parameters
-    spca = SparsePCA(n_components=1, alpha=1, ridge_alpha=0.01, max_iter=1000, tol=1e-08, method='lars', n_jobs=1, U_init=None, V_init=None, verbose=False, random_state=None)
+    print "Beggining the spca with our algorithm..."
+    csv_matrix = import_csv_matrix(matrix_path, delimiter, False)
+    sparse_matrix = csv_to_sparse(csv_matrix, n_lines, n_col)
+    components = our_spca.components(sparse_matrix, k, h, n_components, norm_row)
+    word_matrix = import_csv_matrix(word_path, delimiter, True)
+    res = []
+    for component in components:
+        res.append(words_from_component(component, word_matrix))
 
-    # train the spca with our matrix
-    spca.fit(dense_matrix)
+    return res
 
-    # return the components
-    return spca.components_
-
-def main_scikit():
-    print "Beginning the sparse pca with scikit"
-    # Providen you have the "data" repo next to this folder
-    return do_sparse_pca(csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ", False), ))
-
-def main_our_spca_few():
-    print "Beginning the sparse pca with our powit implementation for few results"
-    # 421 docs (j) , 32615 words (i) for few
-    # 9000 docs, 2949 mots for many
-    sparse_matrix = csv_to_sparse(import_csv_matrix("../data/few-results_matrix.csv", " ", False), 32615, 421)
-    component = our_spca.powit(sparse_matrix, 50, 500)
-    word_matrix = import_csv_matrix("../data/few-results_words.csv", " ", True)
-    words_from_component(component, word_matrix)
-
-def main_our_spca_many():
-    print "Beginning the sparse pca with our powit implementation for many results"
-    # 421 docs (j) , 32615 words (i) for few
-    # 9000 docs, 2950 mots for many
-    sparse_matrix = csv_to_sparse(import_csv_matrix("../data/many-results_matrix.csv", " ", False), 2950, 9000)
-    components = our_spca.components(sparse_matrix, 50, 2000, 3)
-    word_matrix = import_csv_matrix("../data/many-results_words.csv", " ", True)
-    for i in range(3):
-        words_from_component(components[i], word_matrix)
-
-
+    # Examples
+    # run_spca("../data/many-results_matrix.csv", 2950, 9000, "../data/many-results_words.csv", " ", 50, 2000, 6, True)
+    # run_spca("../data/few-results_matrix.csv", 2950, 9000, "../data/few-results_words.csv", " ", 32615, 421, 6, True)
 
 # ================= Old Code
 # Connects to Mongo DB and returns the pointer for the collection
@@ -109,7 +88,27 @@ def vectorize_bags(token_bags_cursor):
 
     vec.fit_transform(results_bags).toarray()
 
+# do the SparsePCA with scikit learn
+def do_sparse_pca(sparse_matrix):
+    # from skikit learn http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.SparsePCA.html#sklearn.decomposition.SparsePCA
 
-# pylint: disable=E1103
-SPARSE_MATRIX = np.loadtxt(open("./matrices_creuses/few-results_matrix.csv", "rb"), delimiter=" ")
-# pylint: enable=E1103
+    dense_matrix = sparse_matrix.tobsr().toarray()
+    # instantiate the spca with some parameters
+    spca = SparsePCA(n_components=6, alpha=0.01, ridge_alpha=0.01, max_iter=1000, tol=1e-08, method='lars', n_jobs=1, U_init=None, V_init=None, verbose=False, random_state=None)
+
+    # train the spca with our matrix
+    spca.fit(dense_matrix)
+
+    # return the components
+    return spca.components_
+
+def main_scikit_many():
+    print "Beginning the sparse pca with scikit for many results"
+    # Providen you have the "data" repo next to this folder
+    sparse_matrix = csv_to_sparse(import_csv_matrix("../data/many-results_matrix.csv", " ", False), 2950, 9000)
+
+    word_matrix = import_csv_matrix("../data/many-results_words.csv", " ", True)
+
+    component = do_sparse_pca(sparse_matrix)
+
+    words_from_component(component[0], word_matrix)
