@@ -42,7 +42,7 @@ def words_from_component(component_matrix, word_matrix):
         res.append([word_matrix[i][1], component_matrix[i]])
     return sorted(res,key=op.itemgetter(1),reverse=True)
 
-def insert_res_in_mongodb(res, matrix_path, n_lines, n_col, word_path, k, h, n_components, norm_row):
+def insert_res_in_mongodb(res, params, n_components):
     "Insert the result of our spca in the db so it can be stored, retrieved and displayed in a web interface later"
     # Connects to Mongo DB and use the collection "components"
     connection = pymongo.Connection()
@@ -64,23 +64,13 @@ def insert_res_in_mongodb(res, matrix_path, n_lines, n_col, word_path, k, h, n_c
     }}
     """
 
-    params = {
-        'matrix_path':matrix_path,
-        'n_lines':n_lines,
-        'n_col':n_col,
-        'word_path':word_path,
-        'k':k,
-        'h':h,
-        'norm_row':norm_row
-    }
-
     same_record = components.find_one(params)
 
     record = params
     record['n_components'] = n_components
     record['components'] = {}
-    n_component = 1
 
+    n_component = 1
     for word_component in res:
 
         component_record = {}        
@@ -121,7 +111,17 @@ def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_componen
     for component in components:
         res.append(words_from_component(component, word_matrix))
 
-    insert_res_in_mongodb(res, matrix_path, n_lines, n_col, word_path, k, h, n_components, norm_row)
+    params = {
+        'matrix_path':matrix_path,
+        'n_lines':n_lines,
+        'n_col':n_col,
+        'word_path':word_path,
+        'k':k,
+        'h':h,
+        'norm_row':norm_row
+    }
+
+    insert_res_in_mongodb(res, params, n_components)
 
     return res
 
