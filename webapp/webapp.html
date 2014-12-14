@@ -9,11 +9,33 @@
 </body>
 
 <template name="testsBoard">
-    {{#each tests}}
-        {{> test}}
-    {{/each}}
+    <table>
+        <caption>Experiments</caption>
+        <thead>
+            <tr>
+                <th>Matrix</th>
+                <th>Word</th>
+                <th>k</th>
+                <th>h</th>
+                <th>Row norm</th>
+                <th>Precision</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each tests}}
+                {{> test}}
+            {{/each}}
+        </tbody>
+    </table>
 </template>
 
 <template name="test">
-    <h2>Bloup</h2>
+    <tr>
+        <td>{{matrix_path}}</td>
+        <td>{{word_path}}</td>
+        <td>{{k}}</td>
+        <td>{{h}}</td>
+        <td>{{norm_row}}</td>
+        <td>{{precision}}</td>
+    </tr>
 </template>
