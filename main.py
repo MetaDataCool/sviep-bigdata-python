@@ -45,8 +45,8 @@ def words_from_component(component_matrix, word_matrix):
 def insert_res_in_mongodb(res, params, n_components):
     "Insert the result of our spca in the db so it can be stored, retrieved and displayed in a web interface later"
     # Connects to Mongo DB and use the collection "components"
-    connection = pymongo.Connection()
-    database = connection["sviepbd"]
+    connection = pymongo.Connection('127.0.0.1', 3001)
+    database = connection["local"]
     components = database.components
 
     """
