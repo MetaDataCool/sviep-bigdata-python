@@ -53,38 +53,43 @@ def insert_res_in_mongodb(res, matrix_path, n_lines, n_col, word_path, k, h, n_c
     record structure
     {
     params, 
+    n_components : 4,
     components : {
         1 : {
             1 : {word, weight}
             2 : {word, weight}
+            ...
         }
+        ...
     }}
     """
 
-    record = {
+    params = {
         'matrix_path':matrix_path,
         'n_lines':n_lines,
         'n_col':n_col,
         'word_path':word_path,
         'k':k,
         'h':h,
-        'norm_row':norm_row,
-        'components': {}
+        'norm_row':norm_row
     }
 
+    same_record = components.find_one(params)
 
+    record = params
+    record['n_components'] = n_components
+    record['components'] = {}
     n_component = 1
 
     for word_component in res:
 
         component_record = {}        
         n_word = 1
-
         for word in word_component:
 
             component_record[str(n_word)] = {
-                'word': word[0],
-                'weight' : word[1]
+                'word':word[0],
+                'weight':word[1]
             }
 
             n_word = n_word + 1
@@ -92,7 +97,17 @@ def insert_res_in_mongodb(res, matrix_path, n_lines, n_col, word_path, k, h, n_c
         record['components'][str(n_component)] = component_record
         n_component = n_component + 1
 
-    components.insert(record)
+    if same_record == None:
+        print "creating new record for this result..."
+        components.insert(record)
+        return
+
+    if same_record['n_components'] < record['n_components']:
+        print "updating existing record with new components..."
+        components.update({"_id":same_record['_id']}, record)
+        return
+    else:
+        print "no need to update, last result better"
 
 def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_components, norm_row):
     "Run our algorithm with all the parameters"
