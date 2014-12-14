@@ -1,14 +1,14 @@
-if (Meteor.isClient) {
-  // counter starts at 0
-  Session.setDefault("counter", 0);
+Comps = new Mongo.Collection("comps");
 
-  Template.hello.helpers({
-    counter: function () {
-      return Session.get("counter");
+if (Meteor.isClient) {
+
+  Template.testsBoard.helpers({
+    tests: function () {
+      return Comps.find({});
     }
   });
 
-  Template.hello.events({
+  Template.testsBoard.events({
     'click button': function () {
       // increment the counter when button is clicked
       Session.set("counter", Session.get("counter") + 1);

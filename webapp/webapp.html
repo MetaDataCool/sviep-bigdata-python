@@ -3,12 +3,17 @@
 </head>
 
 <body>
-  <h1>Welcome to Meteor!</h1>
+  <h1>Welcome to SVIEP bigdata SPCA web app !</h1>
 
-  {{> hello}}
+  {{> testsBoard}}
 </body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+<template name="testsBoard">
+    {{#each tests}}
+        {{> test}}
+    {{/each}}
+</template>
+
+<template name="test">
+    <h2>Bloup</h2>
 </template>
