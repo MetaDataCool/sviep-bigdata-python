@@ -17,7 +17,8 @@
                 <th>Word</th>
                 <th>k</th>
                 <th>h</th>
-                <th>Row norm</th>
+                <th>Nb comp</th>
+                <th>Norm</th>
                 <th>Precision</th>
             </tr>
         </thead>
@@ -35,7 +36,14 @@
         <td>{{word_path}}</td>
         <td>{{k}}</td>
         <td>{{h}}</td>
-        <td>{{norm_row}}</td>
+        <td>{{n_components}}</td>
+        <td>
+        {{#if norm_row}}
+            Row
+        {{else}}
+            Col
+        {{/if}}
+        </td>
         <td>{{precision}}</td>
     </tr>
 </template>
