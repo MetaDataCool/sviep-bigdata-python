@@ -18,7 +18,7 @@ def powit(A,k,h):
 
 	"fix parameter that could be put as input as well"
 	maxiter=1000
-	ztol=1.0e-5
+	ztol=1.0e-8
 	for i in range(maxiter):
 		pi1=A.dot(qi)
 		pi1=mu.project_unit_circle(mu.threshold(k,pi1))
@@ -54,6 +54,10 @@ def zero_rows(p,M):
 
 def components(A,k,h,m, norm_row):
 	res = []
+	if norm_row:
+		A = mu.normalize_by_row(A)
+	else:
+		A = mu.normalize_by_col(A)
 	for i in range(m):
 		print ("getting component " + `i` + "...")
 		pi = powit(A,k,h)
