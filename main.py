@@ -42,6 +42,58 @@ def words_from_component(component_matrix, word_matrix):
         res.append([word_matrix[i][1], component_matrix[i]])
     return sorted(res,key=op.itemgetter(1),reverse=True)
 
+def insert_res_in_mongodb(res, matrix_path, n_lines, n_col, word_path, k, h, n_components, norm_row):
+    "Insert the result of our spca in the db so it can be stored, retrieved and displayed in a web interface later"
+    # Connects to Mongo DB and use the collection "components"
+    connection = pymongo.Connection()
+    database = connection["sviepbd"]
+    components = database.components
+
+    """
+    record structure
+    {
+    params, 
+    components : {
+        1 : {
+            1 : {word, weight}
+            2 : {word, weight}
+        }
+    }}
+    """
+
+    record = {
+        'matrix_path':matrix_path,
+        'n_lines':n_lines,
+        'n_col':n_col,
+        'word_path':word_path,
+        'k':k,
+        'h':h,
+        'norm_row':norm_row,
+        'components': {}
+    }
+
+
+    n_component = 1
+
+    for word_component in res:
+
+        component_record = {}        
+        n_word = 1
+
+        for word in word_component:
+
+            component_record[str(n_word)] = {
+                'word': word[0],
+                'weight' : word[1]
+            }
+
+            n_word = n_word + 1
+
+        record['components'][str(n_component)] = component_record
+        n_component = n_component + 1
+
+    components.insert(record)
+
 def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_components, norm_row):
     "Run our algorithm with all the parameters"
 
@@ -53,6 +105,8 @@ def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_componen
     res = []
     for component in components:
         res.append(words_from_component(component, word_matrix))
+
+    insert_res_in_mongodb(res, matrix_path, n_lines, n_col, word_path, k, h, n_components, norm_row)
 
     return res
 
