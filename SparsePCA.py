@@ -7,7 +7,7 @@ import operator as op
 import mat_utils as mu
 
 
-def powit(A,k,h):
+def powit(A,k,h,precision):
 	"A is the sparse matrix already"
 	n=A.get_shape()[0]
 	print n
@@ -18,7 +18,7 @@ def powit(A,k,h):
 
 	"fix parameter that could be put as input as well"
 	maxiter=1000
-	ztol=1.0e-8
+	ztol=precision
 	for i in range(maxiter):
 		pi1=A.dot(qi)
 		pi1=mu.project_unit_circle(mu.threshold(k,pi1))
@@ -52,7 +52,7 @@ def zero_rows(p,M):
 	return mu.csr_diag(d) * M
 
 
-def components(A,k,h,m, norm_row):
+def components(A,k,h,m, norm_row, precision):
 	res = []
 	if norm_row:
 		A = mu.normalize_by_row(A)
@@ -60,7 +60,7 @@ def components(A,k,h,m, norm_row):
 		A = mu.normalize_by_col(A)
 	for i in range(m):
 		print ("getting component " + `i` + "...")
-		pi = powit(A,k,h)
+		pi = powit(A,k,h, precision)
 		res.append(pi)
 		if norm_row:
 			A=mu.normalize_by_row(zero_rows(pi,A))

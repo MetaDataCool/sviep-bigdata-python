@@ -99,13 +99,13 @@ def insert_res_in_mongodb(res, params, n_components):
     else:
         print "no need to update, last result better"
 
-def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_components, norm_row):
+def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_components, norm_row, precision):
     "Run our algorithm with all the parameters"
 
     print "Beggining the spca with our algorithm..."
     csv_matrix = import_csv_matrix(matrix_path, delimiter, False)
     sparse_matrix = csv_to_sparse(csv_matrix, n_lines, n_col)
-    components = our_spca.components(sparse_matrix, k, h, n_components, norm_row)
+    components = our_spca.components(sparse_matrix, k, h, n_components, norm_row, precision)
     word_matrix = import_csv_matrix(word_path, delimiter, True)
     res = []
     for component in components:
@@ -118,7 +118,8 @@ def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_componen
         'word_path':word_path,
         'k':k,
         'h':h,
-        'norm_row':norm_row
+        'norm_row':norm_row,
+        'precision':precision
     }
 
     insert_res_in_mongodb(res, params, n_components)
@@ -126,8 +127,8 @@ def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_componen
     return res
 
     # Examples
-    # res = run_spca("../data/many-results_matrix.csv", 2950, 9000, "../data/many-results_words.csv", " ", 50, 2000, 6, True)
-    # res = run_spca("../data/few-results_matrix.csv", 2950, 9000, "../data/few-results_words.csv", " ", 32615, 421, 6, True)
+    # res = run_spca("../data/many-results_matrix.csv", 2950, 9000, "../data/many-results_words.csv", " ", 50, 2000, 6, False, 1.0e-8)
+    # res = run_spca("../data/few-results_matrix.csv", 2950, 9000, "../data/few-results_words.csv", " ", 32615, 421, 6, False, 1.0e-8)
     # pprint(res) ## pretty-printing, more readable
 
 # ================= Old Code
