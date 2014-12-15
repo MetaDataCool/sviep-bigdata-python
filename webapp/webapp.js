@@ -52,7 +52,6 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     executeSPCA: function(args_dict) {
-      // args = []; args[0]=
       // args_dict = {matrix_path: "/Users/mcoenca/Documents/Thnktwice/Code/data/many-results_matrix.csv", n_lines: "2950", n_col: "9000", word_path: "/Users/mcoenca/Documents/Thnktwice/Code/data/many-results_words.csv", k:"10", h:"8000", n_components: "2", norm_row: "True", precision: "1.0e-8"};
       var args_string = dictToString(args_dict);
       if (!this.isSimulation){
