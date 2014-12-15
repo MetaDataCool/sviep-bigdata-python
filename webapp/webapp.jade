@@ -1,0 +1,97 @@
+head
+  title Sviep Web App
+
+body
+  h1(style="text-align:center") Welcome to SVIEP bigdata SPCA web app !
+  +runExperimentForm
+  +testsBoard
+
+template(name="testsBoard")
+  .container
+    table.table.table-hover.table-condensed
+      thead
+        tr
+          th Matrix
+          th Word
+          th k
+          th h
+          th Ncomp
+          th Norm
+          th Precision
+      tbody
+        each tests
+          +test
+
+template(name="test")
+  tr
+    td #{matrix_path}
+    td #{word_path}
+    td #{k}
+    td #{h}
+    td #{n_components}
+    td 
+      if norm_row
+        = "Row"
+      else
+        = "Col"
+    td #{precision}
+
+template(name="runExperimentForm")
+  br
+  form.form-horizontal.small(role="form")
+    .container
+      .form-group
+        .col-sm-1
+          label.control-label Matrix        
+        .col-sm-5
+          input#matrix_path.form-control.input-sm(type="text", placeholder="Matrix Path" value="/Users/mcoenca/Documents/Thnktwice/Code/data/many-results_matrix.csv")
+        .col-sm-1
+          label.control-label Words        
+        .col-sm-5  
+          input#word_path.form-control.input-sm(type="text", placeholder="Word path" value="/Users/mcoenca/Documents/Thnktwice/Code/data/many-results_words.csv")
+      .form-group
+        .col-sm-1
+          label.control-label N Lines       
+        .col-sm-2
+          input#n_lines.form-control.input-sm(type="text", placeholder="N lines" value = "2950")
+        .col-sm-1
+          label.control-label N Col
+        .col-sm-2
+          input#n_col.form-control.input-sm(type="text", placeholder="N col" value="9000")
+      .form-group
+        .col-sm-1
+          label.control-label k
+        .col-sm-1
+          input#k.form-control.input-sm(type="text", placeholder="10" value="10")
+        .col-sm-1
+        .col-sm-1
+          label.control-label h
+        .col-sm-1
+          input#h.form-control.input-sm(type="text", placeholder="9000" value="9000")
+        .col-sm-1
+        .col-sm-1
+          label.control-label Precision
+        .col-sm-2
+          input#precision.form-control.input-sm(type="text", placeholder="1.0e-7" value="1.0e-7")   
+      .form-group     
+        .col-sm-1
+          label.control-label Ncomp
+        .col-sm-2
+          input#n_components.form-control.input-sm(type="text", placeholder="N Components" value ="3")
+        .col-sm-3
+        .col-sm-1
+            label.control-label Normalize
+        .col-sm-2
+          .radio
+            label
+              input(type="radio" name="normalize" value="True") 
+              = "Row"
+          .radio
+            label
+              input(type="radio" name="normalize" value="False" checked) 
+              = "Col"
+
+
+      .form-group
+        .col-sm-2.center-block(style="float:none")
+          button#submit_call.btn.btn-default(type="submit") Run
