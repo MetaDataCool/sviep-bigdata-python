@@ -84,14 +84,14 @@ template(name="runExperimentForm")
         .col-sm-2
           .radio
             label
-              input(type="radio" name="normalize") 
+              input(type="radio" name="normalize" value="True") 
               = "Row"
           .radio
             label
-              input(type="radio" name="normalize") 
+              input(type="radio" name="normalize" value="False" checked) 
               = "Col"
 
 
       .form-group
         .col-sm-2.center-block(style="float:none")
-          button.btn.btn-default(type="submit") Run
+          button#submit_call.btn.btn-default(type="submit") Run

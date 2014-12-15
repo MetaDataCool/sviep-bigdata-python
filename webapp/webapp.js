@@ -8,10 +8,40 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.testsBoard.events({
-    'click button': function () {
-      // increment the counter when button is clicked
-      Session.set("counter", Session.get("counter") + 1);
+  Template.runExperimentForm.events({
+    'click #submit_call': function (e, templ) {
+       e.preventDefault();
+
+      var args_dict = {};
+
+      args_dict.matrix_path   = templ.$("#matrix_path").val();
+      args_dict.word_path     = templ.$("#word_path").val();
+      args_dict.n_lines       = templ.$("#n_lines").val();
+      args_dict.n_col         = templ.$("#n_col").val();
+      args_dict.k             = templ.$("#k").val();
+      args_dict.h             = templ.$("#h").val();
+      args_dict.n_components  = templ.$("#n_components").val();
+      args_dict.norm_row      = templ.$("form input[type=radio]:checked").val();
+      args_dict.precision     = templ.$("#precision").val();
+
+      console.log(args_dict);
+    },
+    'submit form': function (e, templ) {
+      e.preventDefault();
+
+      var args_dict = {};
+
+      args_dict.matrix_path   = templ.$("#matrix_path").val();
+      args_dict.word_path     = templ.$("#word_path").val();
+      args_dict.n_lines       = templ.$("#n_lines").val();
+      args_dict.n_col         = templ.$("#n_col").val();
+      args_dict.k             = templ.$("#k").val();
+      args_dict.h             = templ.$("#h").val();
+      args_dict.n_components  = templ.$("#n_components").val();
+      args_dict.norm_row      = templ.$("form input[type=radio]:checked").val();
+      args_dict.precision     = templ.$("#precision").val();
+
+      console.log(args_dict);
     }
   });
 }
