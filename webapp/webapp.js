@@ -36,6 +36,7 @@ if (Meteor.isServer) {
   Meteor.methods({
     executeSPCA: function(args) {
       if (!this.isSimulation){
+        console.log("Starting spca...");
         return wrappedPythonSPCA({}, supercalback);
       }
     }
