@@ -6,10 +6,10 @@
 meteor-platform
 autopublish
 insecure
+
+reywood:bootstrap3-sass
+mquandalle:jade
 meteorhacks:npm
 
 
 npm-container
-reywood:bootstrap3-sass
-mquandalle:jade
-

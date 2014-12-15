@@ -62,10 +62,12 @@ if (Meteor.isServer) {
 
   var dictToString = function (args_dict) {
     res = "";
-    res = res + process.env.PWD + "/assets/app" + args_dict.matrix_path + " " + 
+    // res = res + process.env.PWD + "/assets/app" + args_dict.matrix_path + " " + 
+    res = res + args_dict.matrix_path + " " +
     args_dict.n_lines + " " +
     args_dict.n_col + " " +
-    process.env.PWD + "/assets/app" + args_dict.word_path + " " +
+    // process.env.PWD + "/assets/app" + args_dict.word_path + " " +
+    args_dict.word_path + " " +
     args_dict.k + " " +
     args_dict.h + " " +
     args_dict.n_components + " " +
@@ -76,7 +78,7 @@ if (Meteor.isServer) {
   };
 
   var executePythonSPCA = function (args_string, callback) {
-    var file_path = process.env.PWD + "/assets/app/call_spca.py ";
+    var file_path = process.env.PWD + "/private/call_spca.py ";
     // console.log(file_path);
     Meteor.npmRequire('child_process').exec("python " + file_path + args_string, callback);
   };
