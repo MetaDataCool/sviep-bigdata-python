@@ -1,0 +1,36 @@
+head
+  title Sviep Web App
+
+body
+  h1 Welcome to SVIEP bigdata SPCA web app !
+  +testsBoard
+
+template(name="testsBoard")
+  table.table.table-hover.table-condensed
+    caption Experiments !
+    thead
+      tr
+        th Matrix
+        th Word
+        th k
+        th h
+        th Nb comp
+        th Norm
+        th Precision
+    tbody
+      each tests
+        +test
+
+template(name="test")
+  tr
+    td #{matrix_path}
+    td #{word_path}
+    td #{k}
+    td #{h}
+    td #{n_components}
+    td 
+      if norm_row
+        = "Row"
+      else
+        = "Col"
+    td #{precision}
