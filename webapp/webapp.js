@@ -59,13 +59,13 @@ if (Meteor.isServer) {
         }
         if (stderr) console.log(stderr);
     };
-    
+
   var dictToString = function (args_dict) {
     res = "";
-    res = res + args_dict.matrix_path + " " + 
+    res = res + process.env.PWD + "/assets/app" + args_dict.matrix_path + " " + 
     args_dict.n_lines + " " +
     args_dict.n_col + " " +
-    args_dict.word_path + " " +
+    process.env.PWD + "/assets/app" + args_dict.word_path + " " +
     args_dict.k + " " +
     args_dict.h + " " +
     args_dict.n_components + " " +
@@ -76,7 +76,9 @@ if (Meteor.isServer) {
   };
 
   var executePythonSPCA = function (args_string, callback) {
-    Meteor.npmRequire('child_process').exec("python " + "/Users/mcoenca/Documents/Thnktwice/Code/sviep-bigdata-python/call_spca.py " + args_string, callback);
+    var file_path = process.env.PWD + "/assets/app/call_spca.py ";
+    // console.log(file_path);
+    Meteor.npmRequire('child_process').exec("python " + file_path + args_string, callback);
   };
 
   var wrappedPythonSPCA = Meteor.wrapAsync(executePythonSPCA);
