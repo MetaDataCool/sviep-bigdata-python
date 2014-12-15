@@ -42,23 +42,93 @@ def words_from_component(component_matrix, word_matrix):
         res.append([word_matrix[i][1], component_matrix[i]])
     return sorted(res,key=op.itemgetter(1),reverse=True)
 
-def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_components, norm_row):
+def insert_res_in_mongodb(res, params, n_components):
+    "Insert the result of our spca in the db so it can be stored, retrieved and displayed in a web interface later"
+    # Connects to Mongo DB and use the collection "components"
+    connection = pymongo.Connection()
+    database = connection["sviepbd"]
+    components = database.components
+
+    """
+    record structure
+    {
+    params, 
+    n_components : 4,
+    components : {
+        1 : {
+            1 : {word, weight}
+            2 : {word, weight}
+            ...
+        }
+        ...
+    }}
+    """
+
+    same_record = components.find_one(params)
+
+    record = params
+    record['n_components'] = n_components
+    record['components'] = {}
+
+    n_component = 1
+    for word_component in res:
+
+        component_record = {}        
+        n_word = 1
+        for word in word_component:
+
+            component_record[str(n_word)] = {
+                'word':word[0],
+                'weight':word[1]
+            }
+
+            n_word = n_word + 1
+
+        record['components'][str(n_component)] = component_record
+        n_component = n_component + 1
+
+    if same_record == None:
+        print "creating new record for this result..."
+        components.insert(record)
+        return
+
+    if same_record['n_components'] < record['n_components']:
+        print "updating existing record with new components..."
+        components.update({"_id":same_record['_id']}, record)
+        return
+    else:
+        print "no need to update, last result better"
+
+def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_components, norm_row, precision):
     "Run our algorithm with all the parameters"
 
     print "Beggining the spca with our algorithm..."
     csv_matrix = import_csv_matrix(matrix_path, delimiter, False)
     sparse_matrix = csv_to_sparse(csv_matrix, n_lines, n_col)
-    components = our_spca.components(sparse_matrix, k, h, n_components, norm_row)
+    components = our_spca.components(sparse_matrix, k, h, n_components, norm_row, precision)
     word_matrix = import_csv_matrix(word_path, delimiter, True)
     res = []
     for component in components:
         res.append(words_from_component(component, word_matrix))
 
+    params = {
+        'matrix_path':matrix_path,
+        'n_lines':n_lines,
+        'n_col':n_col,
+        'word_path':word_path,
+        'k':k,
+        'h':h,
+        'norm_row':norm_row,
+        'precision':precision
+    }
+
+    insert_res_in_mongodb(res, params, n_components)
+
     return res
 
     # Examples
-    # res = run_spca("../data/many-results_matrix.csv", 2950, 9000, "../data/many-results_words.csv", " ", 50, 2000, 6, True)
-    # res = run_spca("../data/few-results_matrix.csv", 2950, 9000, "../data/few-results_words.csv", " ", 32615, 421, 6, True)
+    # res = run_spca("../data/many-results_matrix.csv", 2950, 9000, "../data/many-results_words.csv", " ", 50, 2000, 6, False, 1.0e-8)
+    # res = run_spca("../data/few-results_matrix.csv", 2950, 9000, "../data/few-results_words.csv", " ", 32615, 421, 6, False, 1.0e-8)
     # pprint(res) ## pretty-printing, more readable
 
 # ================= Old Code
