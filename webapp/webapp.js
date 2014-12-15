@@ -24,7 +24,7 @@ if (Meteor.isClient) {
       args_dict.norm_row      = templ.$("form input[type=radio]:checked").val();
       args_dict.precision     = templ.$("#precision").val();
 
-      console.log(args_dict);
+      Meteor.call('executeSPCA', args_dict);
     },
     'submit form': function (e, templ) {
       e.preventDefault();
@@ -41,7 +41,7 @@ if (Meteor.isClient) {
       args_dict.norm_row      = templ.$("form input[type=radio]:checked").val();
       args_dict.precision     = templ.$("#precision").val();
 
-      console.log(args_dict);
+      Meteor.call('executeSPCA', args_dict);
     }
   });
 }
@@ -59,6 +59,7 @@ if (Meteor.isServer) {
         }
         if (stderr) console.log(stderr);
     };
+    
   var dictToString = function (args_dict) {
     res = "";
     res = res + args_dict.matrix_path + " " + 
