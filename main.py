@@ -130,6 +130,7 @@ def run_spca(matrix_path, n_lines, n_col, word_path, delimiter, k, h, n_componen
     # res = run_spca("../data/many-results_matrix.csv", 2950, 9000, "../data/many-results_words.csv", " ", 50, 2000, 6, False, 1.0e-8)
     # res = run_spca("../data/few-results_matrix.csv", 2950, 9000, "../data/few-results_words.csv", " ", 32615, 421, 6, False, 1.0e-8)
     # pprint(res) ## pretty-printing, more readable
+run_spca("/Users/mcoenca/Documents/Thnktwice/Code/data/many-results_matrix.csv", 2950, 9000, "/Users/mcoenca/Documents/Thnktwice/Code/data/many-results_words.csv", " ", 10, 8000, 10, False, 1.0e-6)
 
 # ================= Old Code
 # Connects to Mongo DB and returns the pointer for the collection
